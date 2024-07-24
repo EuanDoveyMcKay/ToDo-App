@@ -4,12 +4,12 @@
 ActiveTasks = [
 
     {"Title": "test",
-     "Descripton": "Some Rando test",
+     "Description": "Some Rando test",
      "Duration": "40", #in hours
      "Do by": "Enter Date here"},
 
      {"Title": "atest",
-      "Descripton": "Some Rando test",
+      "Description": "Some Rando test",
       "Duration": "40", #in hours
       "Do by": "Enter Date here"}
 ]
@@ -18,9 +18,13 @@ CompletedTasks = [
 
 ]
 
+ArchivedTasks = [
+    
+]
+
 SortType = "Alphabetic Ascending"
 
-def NewToDo(Title, Description, Duration, DoBy):
+def NewToDo(Title, Description="", Duration="", DoBy="--/--/--"):
     ActiveTasks.append({"Title": Title,
                         "Description": Description,
                         "Duration": Duration,
