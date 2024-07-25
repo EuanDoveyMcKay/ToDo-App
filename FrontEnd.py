@@ -1,11 +1,11 @@
 import customtkinter as tk
-from Main import ActiveTasks
+from BackEnd import ActiveTasks
 
 tk.set_appearance_mode("dark")
 tk.set_default_color_theme("dark-blue")
 
 root = tk.CTk()
-root.grid_rowconfigure(0, weight=1)  # configure grid system
+root.grid_rowconfigure(0, weight=1)  # configure grid system so that the correct column and row expands
 root.grid_columnconfigure(0, weight=1)
 TextFont = tk.CTkFont(family="Office", size=15)
 TitleFont = tk.CTkFont(family="Office", weight="bold", underline=True, size=30)
@@ -41,6 +41,9 @@ OpenedToDoFrame = tk.CTkScrollableFrame(
       fg_color="grey10"
 )
 
+OpenedToDoFrame.grid_rowconfigure(2, weight=1)
+OpenedToDoFrame.grid_columnconfigure(1, weight=1)
+
 def OpenToDo(TaskList, ParentFrame, ToDoTitle):
       OpenedToDoFrame.pack_forget()
       for todo in TaskList:
@@ -57,7 +60,7 @@ def OpenToDo(TaskList, ParentFrame, ToDoTitle):
                 )
                 Duration = tk.CTkLabel(
                       master=ParentFrame,
-                      text=todo["Duration"],
+                      text=todo["Duration"]+" hours",
                       font=TextFont
                 )
                 DoBy = tk.CTkLabel(
@@ -65,19 +68,45 @@ def OpenToDo(TaskList, ParentFrame, ToDoTitle):
                       text=todo["Do by"],
                       font=TextFont
                 )
-                Title.pack()
-                Description.pack()
-                Duration.pack()
-                DoBy.pack()
+                CloseButton = tk.CTkButton(
+                    master=ParentFrame,
+                    font=TextFont,
+                    text="X",
+                    width=50,
+                    corner_radius=60,
+                    command=CloseToDo
+                )
+                Title.grid(row=0, column=1, pady=(10,0))
+                Duration.grid(row=0, column=0)
+                DoBy.grid(row=1, column=1, pady=(0,20))
+                Description.grid(row=2, column=1)
+                CloseButton.grid(row=0, column=3)
                 MasterFrame.grid_forget()
-                OpenedToDoFrame.pack()
+                OpenedToDoFrame.pack(expand=True, fill="both")
                 break
 
             else:
                 continue
-                  
 
-def FillListFrame(TaskList: list, ParentFrame): # TaskList is the desired list of "active", "completed" and "archived" while ParentFrame is the frame to put it in
+def CloseToDo():
+     OpenedToDoFrame.pack_forget()
+     ActiveFrame.pack()
+     MasterFrame.grid(row=0, column=0, sticky="nesw")
+
+def FillListFrame(TaskList: list, ParentFrame: tk.CTkFrame): # TaskList is the desired list of "active", "completed" and "archived" while ParentFrame is the frame to put it in
+        Title = tk.CTkLabel(
+             master=ParentFrame,
+             text="Tasks to complete",
+             font=TitleFont
+        )
+        AddButton = tk.CTkButton(
+             master=ParentFrame,
+             font=TextFont,
+             text="+",
+             width=40,
+             corner_radius=60
+        )
+        Title.pack(pady=10)
         for todo in TaskList:
             button = tk.CTkButton(
                 master=ParentFrame,
@@ -87,12 +116,14 @@ def FillListFrame(TaskList: list, ParentFrame): # TaskList is the desired list o
                 height=10,
                 command=lambda: OpenToDo(TaskList,OpenedToDoFrame,button._text)
             )
-            button.pack(
-                  pady=(10),
-                  fill="x"
-            )
-      
-FillListFrame(ActiveTasks, ActiveFrame)
-ActiveFrame.pack()
-MasterFrame.grid(row=0, column=0)
-root.mainloop()
+
+            button.pack(pady=(10), fill="x")
+        AddButton.pack(pady=(12,0))
+
+def Main():
+    FillListFrame(ActiveTasks, ActiveFrame)
+    ActiveFrame.pack(expand=True, fill="both")
+    MasterFrame.grid(row=0, column=0, sticky="nesw")
+    root.mainloop()
+
+Main()
